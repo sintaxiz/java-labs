@@ -1,7 +1,7 @@
-package com.company;
+package ru.nsu.ccfit;
 
 import java.io.OutputStream;
 
-public interface StatisticWriter {
+public interface WordStatisticWriter {
     void writeStatistic(OutputStream statisticStream, WordStatistic wordStatistic);
 }

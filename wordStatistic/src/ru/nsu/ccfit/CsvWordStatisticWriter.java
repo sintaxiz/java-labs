@@ -1,15 +1,16 @@
-package com.company;
+package ru.nsu.ccfit;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FileStatisticWriter implements StatisticWriter {
+public class CsvWordStatisticWriter implements WordStatisticWriter {
     @Override
     public void writeStatistic(OutputStream statisticStream, WordStatistic wordStatistic) {
         LinkedHashMap<String, Integer> sortedMap = descendingSort(wordStatistic.getWords());
@@ -22,7 +23,8 @@ public class FileStatisticWriter implements StatisticWriter {
                 outputStreamWriter.write(item.getValue().toString());
                 outputStreamWriter.write(",");
                 double percent =  (item.getValue().doubleValue() / wordStatistic.getWordCounter()) * 100;
-                outputStreamWriter.write(percent + "%");
+                DecimalFormat formatter = new DecimalFormat("#0.0");
+                outputStreamWriter.write(formatter.format(percent) + "%");
                 outputStreamWriter.write(System.lineSeparator());
             }
         } catch (IOException e) {

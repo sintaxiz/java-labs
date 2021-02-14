@@ -1,16 +1,13 @@
-package com.company;
-
+package ru.nsu.ccfit;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.HashMap;
 
-public class FileWordCounter implements WordStatisticReader {
+
+public class FileWordStatisticReader implements WordStatisticReader {
     @Override
-    public WordStatistic getStatistic(InputStream inputStream) {
-        HashMap<String, Integer> words = new HashMap<>();
-        int wordCounter = 0;
+    public void getStatistic(InputStream inputStream, WordStatistic wordStatistic) {
         Reader reader = null;
         try {
             reader = new InputStreamReader(inputStream);
@@ -21,22 +18,13 @@ public class FileWordCounter implements WordStatisticReader {
                     wordBuild.append((char) readChar);
                 } else if (wordBuild.length() > 0) {
                     String word = wordBuild.toString();
-                    if (words.containsKey(word)) {
-                        words.replace(word, words.get(word) + 1);
-                    } else {
-                        words.put(word, 1);
-                    }
+                    wordStatistic.addWord(word);
                     wordBuild = new StringBuilder();
-                    wordCounter++;
                 }
             }
             if (wordBuild.length() > 0) {
                 String word = wordBuild.toString();
-                if (words.containsKey(word)) {
-                    words.replace(word, words.get(word) + 1);
-                } else {
-                    words.put(word, 1);
-                }
+                wordStatistic.addWord(word);
             }
         } catch (IOException e) {
             System.err.println("Error while reading file: " + e.getLocalizedMessage());
@@ -49,7 +37,6 @@ public class FileWordCounter implements WordStatisticReader {
                 }
             }
         }
-        return new WordStatistic(words, wordCounter);
     }
 }
 
