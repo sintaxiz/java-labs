@@ -26,8 +26,7 @@ public class ReadFileBlock implements Block {
                 currLine = bufferedReader.readLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new WorkflowException("Can not read line");
+            throw new WorkflowException("Can not read line", e);
         }
 
         return text;

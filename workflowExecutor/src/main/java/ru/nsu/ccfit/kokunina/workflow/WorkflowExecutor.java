@@ -18,7 +18,7 @@ public class WorkflowExecutor {
 
     private void readBlockSequence(String currentLine) {
         blockSequence = Arrays
-                .stream(currentLine.replaceAll(" ","").split("->"))
+                .stream(currentLine.replaceAll(" ", "").split("->"))
                 .mapToInt(Integer::parseInt)
                 .toArray();
     }
@@ -37,7 +37,8 @@ public class WorkflowExecutor {
         try {
             readBlockSequence(bufferedReader.readLine());
         } catch (IOException e) {
-            throw new ParsingException("Can not read sequence. It should be: blockId1->BlockId2->...->...");
+            log.log(Level.SEVERE, "Can not read sequence.", e);
+            throw new ParsingException("Can not read sequence. It should be: blockId1->BlockId2->...->...", e);
         }
     }
 
@@ -65,8 +66,8 @@ public class WorkflowExecutor {
             try {
                 currentBlock = BlockFactory.getInstance().getBlock(blockName);
             } catch (IOException e) {
-                log.log(Level.SEVERE, "Can not find block with id=" + blockIdx);
-                throw new BlockNotFoundException("Can not find block");
+                log.log(Level.SEVERE, "Can not find block with id=" + blockIdx, e);
+                throw new BlockNotFoundException("Can not find block", e);
             }
 
             // Checking block type. First block should be output Only, Last Input Only and others Input/Output
@@ -75,8 +76,7 @@ public class WorkflowExecutor {
                 if (blockType != BlockType.OutputOnly) {
                     throw new WorkflowException("First block should be Output type.");
                 }
-            } else
-            if (i == blockSequence.length - 1) {
+            } else if (i == blockSequence.length - 1) {
                 if (blockType != BlockType.InputOnly) {
                     throw new WorkflowException("Last block should be Input type.");
                 }
@@ -89,8 +89,8 @@ public class WorkflowExecutor {
             try {
                 text = currentBlock.execute(text, blockArgs);
             } catch (WorkflowException e) {
-                log.log(Level.SEVERE, "Can not execute block " + currentBlock.toString());
-                throw new WorkflowException("Can not execute block");
+                log.log(Level.SEVERE, "Can not execute block " + currentBlock.toString(), e);
+                throw e;
             }
 
             log.info("Block " + currentBlock.toString() + " was successfully executed");

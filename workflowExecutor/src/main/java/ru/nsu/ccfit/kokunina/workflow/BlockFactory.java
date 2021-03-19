@@ -8,6 +8,7 @@ import ru.nsu.ccfit.kokunina.workflow.exceptions.UnableCreateBlockException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class BlockFactory {
@@ -51,15 +52,15 @@ public class BlockFactory {
             var blockClass = Class.forName(config.getProperty(blockName)); //
             var blockObject = blockClass.getDeclaredConstructor().newInstance(); // получает стандартный конструктор без параметров
             newBlock = (Block) blockObject;
-        } catch (ClassNotFoundException exception) {
-            log.severe("Exception: Factory can not find class by name");
-            throw new UnableCreateBlockException("");
-        } catch (NoSuchMethodException exception) {
-            log.severe("Exception: Factory can not find constructor in block " + blockName);
-            throw new UnableCreateBlockException("");
+        } catch (ClassNotFoundException e) {
+            log.log(Level.SEVERE, "Factory can not find class by name", e);
+            throw new UnableCreateBlockException("Factory can not find class by name", e);
+        } catch (NoSuchMethodException e) {
+            log.log(Level.SEVERE, "Exception: Factory can not find constructor in block " + blockName, e);
+            throw new UnableCreateBlockException("Factory can not find constructor in block", e);
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            log.severe("Exception: Factory can not create new instance of " + blockName + e.toString());
-            throw new UnableCreateBlockException("");
+            log.log(Level.SEVERE, "Exception: Factory can not create new instance of " + blockName, e);
+            throw new UnableCreateBlockException("Factory can not create new instance of", e);
         }
         return newBlock;
     }

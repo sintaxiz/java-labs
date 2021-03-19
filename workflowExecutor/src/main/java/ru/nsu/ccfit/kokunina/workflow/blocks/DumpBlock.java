@@ -26,8 +26,7 @@ public class DumpBlock implements Block {
                 fileWriter.write(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new WorkflowException("Can not write in file");
+            throw new WorkflowException("Can not write in file", e);
         }
 
         return text;

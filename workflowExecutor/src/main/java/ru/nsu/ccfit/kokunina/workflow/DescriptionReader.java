@@ -45,10 +45,9 @@ public class DescriptionReader {
             }
 
         } catch (IOException e) {
-            throw new ParsingException("Error while reading description");
+            log.log(Level.SEVERE, "Error while reading description", e);
+            throw new ParsingException("Error while reading description", e);
         }
-
-
     }
 
     HashMap<Integer, String> getDescription() {

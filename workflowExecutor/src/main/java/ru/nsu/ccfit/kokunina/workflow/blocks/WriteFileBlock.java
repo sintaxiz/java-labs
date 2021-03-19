@@ -23,8 +23,7 @@ public class WriteFileBlock implements Block {
                 fileWriter.write(line + System.lineSeparator());
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new WorkflowException("Can not write in file");
+            throw new WorkflowException("Can not write in file", e);
         }
         return null;
     }
