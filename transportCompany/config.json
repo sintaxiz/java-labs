@@ -1,0 +1,43 @@
+{
+  "factories": [
+    {
+      "productName": "chocolate",
+      "capacityDepartureStorage": 5,
+      "capacityArrivalStorage": 5,
+      "produceTime": 10,
+      "consumingTime": 10,
+      "loadTime": 10,
+      "unloadTime": 10
+    },
+    {
+      "productName": "milk",
+      "capacityDepartureStorage": 10,
+      "capacityArrivalStorage": 10,
+      "produceTime": 20,
+      "consumingTime": 10,
+      "loadTime": 10,
+      "unloadTime": 10
+    }
+  ],
+  "station": {
+    "distance": 100,
+    "departurePathCount": 20,
+    "arrivalPathCount": 10,
+    "fromDepartureToArrivalPathCount": 10,
+    "fromArrivalToDeparturePathCount": 10
+  },
+  "trains": [
+    {
+      "productName": "chocolate",
+      "capacity": 2,
+      "velocity": 2,
+      "depreciation": 2
+    },
+    {
+      "productName": "milk",
+      "capacity": 3,
+      "velocity": 3,
+      "depreciation": 3
+    }
+  ]
+}
