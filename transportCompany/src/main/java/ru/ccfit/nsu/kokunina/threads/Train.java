@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class Train extends Thread {
 
     private final Depot depot;
+    private final TrainConfig config;
     private final String productName;
     private final Station departureStation;
     private final Station arrivalStation;
@@ -27,6 +28,7 @@ public class Train extends Thread {
                  Station departureStation, Station arrivalStation,
                  double stationDistance) {
         this.depot = depot;
+        this.config = trainConfig;
 
         this.productName = trainConfig.getProductName();
         this.capacity = trainConfig.getCapacity();
@@ -45,13 +47,22 @@ public class Train extends Thread {
 
     @Override
     public void run() {
-        try {
-            loadProducts();
-            deliverProducts();
-            unloadProducts();
-            depreciate();
-        } catch (InterruptedException e) {
-            log.debug(this.toString() + " was interrupted.");
+        long startTime = System.currentTimeMillis();
+        while (!interrupted()) {
+            try {
+                long timeAlive = System.currentTimeMillis() - startTime;
+                if (timeAlive > depreciation) {
+                    depreciate();
+                    log.debug(this.toString() + " ended up with work. Working " + timeAlive + "ms");
+                    return;
+                }
+                loadProducts();
+                deliverProducts();
+                unloadProducts();
+            } catch (InterruptedException e) {
+                log.debug(this.toString() + " was interrupted.");
+                interrupt();
+            }
         }
     }
 
@@ -85,12 +96,15 @@ public class Train extends Thread {
 
     private void depreciate() throws InterruptedException {
         log.info(this.toString() + " started utilizing.");
-        Thread.sleep(depreciation);
         depot.disposeTrain(this);
     }
 
     @Override
     public String toString() {
         return productName + "Train#" + hashCode();
+    }
+
+    public TrainConfig getConfig() {
+        return config;
     }
 }

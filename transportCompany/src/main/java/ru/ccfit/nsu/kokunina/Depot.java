@@ -6,7 +6,6 @@ import ru.ccfit.nsu.kokunina.configs.TrainConfig;
 import ru.ccfit.nsu.kokunina.threads.Train;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -18,6 +17,7 @@ public class Depot {
     ConcurrentLinkedQueue<Train> trains = new ConcurrentLinkedQueue<>();
 
     private final ArrayList<TrainConfig> trainConfigs;
+    private final ArrayList<TrainConfig> aliveTrains;
     private final Station departureStation;
     private final Station arrivalStation;
     private final int distanceBetweenStations;
@@ -33,6 +33,7 @@ public class Depot {
         this.departureStation = departureStation;
         this.arrivalStation = arrivalStations;
         this.distanceBetweenStations = distanceBetweenStations;
+        aliveTrains = new ArrayList<>();
     }
 
     /***
@@ -45,12 +46,22 @@ public class Depot {
     }
 
     public synchronized void stop() {
-        log.info("Depot was stopped.");
+        log.info("Depot starting utilizing trains...");
         interrupted = true;
-        executor.shutdown();
+        executor.shutdownNow();
+        ArrayList<Train> trainsToJoin = new ArrayList<>();
         for (Train train : trains) {
             disposeTrain(train);
+            trainsToJoin.add(train);
         }
+        for (Train train : trainsToJoin) {
+            try {
+                train.join();
+            } catch (InterruptedException e) {
+                log.error("main thread was interrupted", e);
+            }
+        }
+        log.info("Depot was successfully stopped.");
     }
 
     private synchronized void addTrain(Train newTrain) {
@@ -64,6 +75,11 @@ public class Depot {
 
     public synchronized void disposeTrain(Train train) {
         train.interrupt();
+        if (aliveTrains.remove(train.getConfig())) {
+            log.debug("Train " + train + " removed from alive trains");
+        } else {
+            log.error("Can not remove config for this train (Maybe forgot to add it previously?)");
+        }
         trains.remove(train);
         processTrains();
     }
@@ -73,10 +89,13 @@ public class Depot {
             return;
         }
         for (TrainConfig trainConfig : trainConfigs) {
-            executor.execute(() -> {                // TrainCreator
-                Train newTrain = new Train(this, trainConfig, departureStation, arrivalStation, distanceBetweenStations);
-                addTrain(newTrain);
-            });
+            if (!aliveTrains.contains(trainConfig)) {
+                executor.execute(() -> {                // TrainCreator
+                    Train newTrain = new Train(this, trainConfig, departureStation, arrivalStation, distanceBetweenStations);
+                    addTrain(newTrain);
+                });
+                aliveTrains.add(trainConfig);
+            }
         }
     }
 }

@@ -65,13 +65,23 @@ public class TransportCompany {
     }
 
     public void stopWork() {
-        depot.stop();
         for (Factory factory : factories) {
             factory.interrupt();
+            try {
+                factory.join();
+            } catch (InterruptedException e) {
+                log.error("Thread executing stopWork was interrupted", e);
+            }
         }
         for (Consumer consumer : consumers) {
             consumer.interrupt();
+            try {
+                consumer.join();
+            } catch (InterruptedException e) {
+                log.error("Thread executing stopWork was interrupted", e);
+            }
         }
+        depot.stop();
     }
 
     private void readConfig(File configFile) throws IOException {

@@ -31,13 +31,19 @@
       "productName": "chocolate",
       "capacity": 2,
       "velocity": 2,
-      "depreciation": 2
+      "depreciation": 5500
     },
     {
       "productName": "milk",
       "capacity": 3,
       "velocity": 3,
-      "depreciation": 3
+      "depreciation": 1220
+    },
+    {
+      "productName": "milk",
+      "capacity": 3,
+      "velocity": 3,
+      "depreciation": 100
     }
   ]
 }

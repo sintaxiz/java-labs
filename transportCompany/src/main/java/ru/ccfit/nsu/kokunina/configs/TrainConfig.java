@@ -5,6 +5,7 @@ public class TrainConfig {
     private String productName;
     private int capacity;
     private int velocity;
+    // depreciation time in ms
     private int depreciation;
 
     public TrainConfig() {

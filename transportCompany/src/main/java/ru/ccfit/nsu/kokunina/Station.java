@@ -10,7 +10,7 @@ public class Station {
     public static final Logger log = LogManager.getLogger();
 
     private int trainPaths = 0;
-    private int maxTrainPaths;
+    private final int maxTrainPaths;
     private HashMap<String, Storage> storages;
 
     public Station(int maxTrainPaths) {

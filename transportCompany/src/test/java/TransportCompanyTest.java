@@ -12,7 +12,7 @@ public class TransportCompanyTest {
 
     @Test
     void checkThatWorkStopsProperly() throws InterruptedException {
-        int WORK_TIME_MS = 20000;
+        int WORK_TIME_MS = 20000; // company will work for 20 seconds
 
         final TransportCompany transportCompany = new TransportCompany();
         int currThreadsCount = Thread.getAllStackTraces().keySet().size();
